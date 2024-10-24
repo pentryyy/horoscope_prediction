@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: horoscope-prediction
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/for_horoscope_db
+    username: postgres
+    password: 1234pass
+  jpa:
+    hibernate.ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+  flyway:
+    user: postgres
+    password: 1234pass
+    schemas: for_horoscope_db
+    locations: filesystem:db/migration
+server:
+  port: 9090
