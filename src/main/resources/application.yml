@@ -14,6 +14,6 @@ spring:
     user: postgres
     password: 1234pass
     schemas: for_horoscope_db
-    locations: filesystem:db/migration
+    locations: classpath:db/migration
 server:
   port: 9090
