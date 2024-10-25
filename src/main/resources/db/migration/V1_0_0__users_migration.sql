@@ -1,8 +1,7 @@
 CREATE TABLE IF NOT EXISTS users (
-    id bigint NOT NULL,
+    id bigint NOT NULL PRIMARY KEY,
     username CHAR(50) NOT NULL UNIQUE,
     password CHAR(100) NOT NULL,
     email CHAR(100) NOT NULL UNIQUE,
-    role smallint NOT NULL,
-    CONSTRAINT users_pkey PRIMARY KEY (id)
-)
+    role SMALLINT NOT NULL
+);
