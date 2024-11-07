@@ -57,8 +57,22 @@
 
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
+			<artifactId>jjwt-api</artifactId>
 			<version>0.12.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.12.6</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.12.6</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- Для работы с данными -->
@@ -80,6 +94,13 @@
 			<groupId>io.swagger.core.v3</groupId>
 			<artifactId>swagger-core</artifactId>
 			<version>2.2.25</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.3</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- База данных -->

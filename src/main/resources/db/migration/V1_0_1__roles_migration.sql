@@ -1,7 +1,15 @@
-CREATE TABLE IF NOT EXISTS roles (
-    id SMALLINT NOT NULL PRIMARY KEY,
-    rolename CHAR(50) NOT NULL UNIQUE
-);
+-- Table: for_horoscope_db.roles
 
-ALTER TABLE users
-ADD CONSTRAINT fk_role FOREIGN KEY (role) REFERENCES roles(id);
+-- DROP TABLE IF EXISTS for_horoscope_db.roles;
+
+CREATE TABLE IF NOT EXISTS for_horoscope_db.roles
+(
+    id smallint NOT NULL,
+    rolename character(50) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT roles_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS for_horoscope_db.roles
+    OWNER to postgres;
