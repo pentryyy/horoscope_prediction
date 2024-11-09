@@ -1,5 +1,6 @@
 package com.pentryyy.horoscope_prediction.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +18,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Tag(name = "Аутентификация")
 public class ExampleController {
-    private final UserService service;
+    @Autowired
+    private UserService service;
 
     @GetMapping
     @Operation(summary = "Доступен только авторизованным пользователям")

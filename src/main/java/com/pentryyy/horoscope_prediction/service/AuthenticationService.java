@@ -6,6 +6,8 @@ import com.pentryyy.horoscope_prediction.dto.SignUpRequest;
 import com.pentryyy.horoscope_prediction.model.RoleEnum;
 import com.pentryyy.horoscope_prediction.model.User;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,10 +17,17 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-    private final UserService userService;
-    private final JwtService jwtService;
-    private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private JwtService jwtService;
 
     /**
      * Регистрация пользователя
@@ -27,13 +36,12 @@ public class AuthenticationService {
      * @return токен
      */
     public JwtAuthenticationResponse signUp(SignUpRequest request) {
-    
-        var user = User.builder()
-                .username(request.getUsername())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(RoleEnum.ROLE_USER.getValue())
-                .build();
+        User user = User.builder()
+                        .username(request.getUsername())
+                        .email(request.getEmail())
+                        .password(passwordEncoder.encode(request.getPassword()))
+                        .role(RoleEnum.ROLE_USER.getValue())
+                        .build();
 
         userService.create(user);
 

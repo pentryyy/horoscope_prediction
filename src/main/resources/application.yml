@@ -1,23 +1,23 @@
+database:
+  username: postgres
+  password: 1234pass
 spring:
   application:
     name: horoscope-prediction
   datasource:
     driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/for_horoscope_db
-    username: postgres
-    password: 1234pass
+    username: ${database.username}
+    password: ${database.password}
   jpa:
-    hibernate.ddl-auto: update
+    hibernate:
+      ddl-auto: update
     generate-ddl: true
     show-sql: true
   flyway:
-    user: postgres
-    password: 1234pass
+    user: ${database.username}
+    password: ${database.password}
     schemas: for_horoscope_db
     locations: classpath:db/migration
-    enabled: false
-token:
-  signing:
-    key: 53A73E5F1C4E0A2D3B5F2D784E6A1B423D6F247D1F6E5C3A596D635A75327855
 server:
   port: 9090

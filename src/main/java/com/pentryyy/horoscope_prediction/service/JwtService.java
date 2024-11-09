@@ -4,22 +4,23 @@ import com.pentryyy.horoscope_prediction.model.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
+import javax.crypto.SecretKey;
+
+import org.springframework.stereotype.Service;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Service
 public class JwtService {
-    @Value("${token.signing.key}")
-    private String jwtSigningKey;
+    private String jwtSigningKey = "53A73E5F1C4E0A2D3B5F2D784E6A1B423D6F247D1F6E5C3A596D635A75327855";
 
     /**
      * Извлечение имени пользователя из токена
@@ -79,12 +80,19 @@ public class JwtService {
      * @param userDetails данные пользователя
      * @return токен
      */
-    @Deprecated
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 100000 * 60 * 24))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
+        long expirationTimeInMillis = 100000 * 60 * 24;
+
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSigningKey);
+        Key key = Keys.hmacShaKeyFor(keyBytes);
+        
+        return Jwts.builder()
+                   .claims(extraClaims)
+                   .subject(userDetails.getUsername())
+                   .issuedAt(new Date(System.currentTimeMillis()))
+                   .expiration(new Date(System.currentTimeMillis() + expirationTimeInMillis))                   
+                   .signWith(key)
+                   .compact();      
     }
 
     /**
@@ -113,19 +121,13 @@ public class JwtService {
      * @param token токен
      * @return данные
      */
-    @Deprecated
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(getSigningKey()).build().parseClaimsJws(token)
-                .getBody();
-    }
-
-    /**
-     * Получение ключа для подписи токена
-     *
-     * @return ключ
-     */
-    private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSigningKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+        SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSigningKey));
+        
+        return Jwts.parser()
+                   .verifyWith(secretKey)
+                   .build()
+                   .parseSignedClaims(token)
+                   .getPayload();
     }
 }

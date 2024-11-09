@@ -7,29 +7,31 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserRepository repository;
+    @Autowired
+    private UserRepository userRepository;
 
     public User save(User user) {
-        return repository.save(user);
+        return userRepository.save(user);
     }
 
     public User create(User user) {
-        if (repository.existsByUsername(user.getUsername())) {
+        if (userRepository.existsByUsername(user.getUsername())) {
             throw new RuntimeException("Пользователь с таким именем уже существует");
         }
-        if (repository.existsByEmail(user.getEmail())) {
+        if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("Пользователь с таким email уже существует");
         }
         return save(user);
     }
 
     public User getByUsername(String username) {
-        return repository.findByUsername(username)
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
 
     }
@@ -43,7 +45,6 @@ public class UserService {
         return getByUsername(username);
     }
 
-    @Deprecated
     public void getAdmin() {
         var user = getCurrentUser();
         user.setRole(RoleEnum.ROLE_ADMIN.getValue());

@@ -4,17 +4,17 @@ public enum RoleEnum {
     ROLE_USER((short) 1),
     ROLE_ADMIN((short) 2);
 
-    private final short value;
+    private short value;
 
-    RoleEnum(short value) {
+    RoleEnum(Short value) {
         this.value = value;
     }
 
-    public short getValue() {
+    public Short getValue() {
         return value;
     }
 
-    public static String getNameByValue(short value) {
+    public static String getNameByValue(Short value) {
         for (RoleEnum role : RoleEnum.values()) {
             if (role.getValue() == value) {
                 return role.name();
