@@ -7,7 +7,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
-import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,8 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @Service
 public class JwtService {
-    private String jwtSigningKey = "53A73E5F1C4E0A2D3B5F2D784E6A1B423D6F247D1F6E5C3A596D635A75327855";
-
     /**
      * Извлечение имени пользователя из токена
      *
@@ -83,18 +80,35 @@ public class JwtService {
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         long expirationTimeInMillis = 100000 * 60 * 24;
 
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSigningKey);
-        Key key = Keys.hmacShaKeyFor(keyBytes);
-        
         return Jwts.builder()
+                   .header().add("typ", "JWT").and()
                    .claims(extraClaims)
                    .subject(userDetails.getUsername())
                    .issuedAt(new Date(System.currentTimeMillis()))
                    .expiration(new Date(System.currentTimeMillis() + expirationTimeInMillis))                   
-                   .signWith(key)
+                   .signWith(getSecretKey(), Jwts.SIG.HS256)
                    .compact();      
     }
 
+     /**
+     * Извлечение всех данных из токена
+     *
+     * @param token токен
+     * @return данные
+     */
+    private Claims extractAllClaims(String token) {        
+        return Jwts.parser()
+                   .verifyWith(getSecretKey())
+                   .build()
+                   .parseSignedClaims(token)
+                   .getPayload();
+    }
+
+    private SecretKey getSecretKey() {
+        String jwtSigningKey = "53A73E5F1C4E0A2D3B5F2D784E6A1B423D6F247D1F6E5C3A596D635A75327855";
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSigningKey));
+    }
+    
     /**
      * Проверка токена на просроченность
      *
@@ -113,21 +127,5 @@ public class JwtService {
      */
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
-    }
-
-    /**
-     * Извлечение всех данных из токена
-     *
-     * @param token токен
-     * @return данные
-     */
-    private Claims extractAllClaims(String token) {
-        SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSigningKey));
-        
-        return Jwts.parser()
-                   .verifyWith(secretKey)
-                   .build()
-                   .parseSignedClaims(token)
-                   .getPayload();
     }
 }

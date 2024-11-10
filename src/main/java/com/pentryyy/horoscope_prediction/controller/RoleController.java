@@ -33,12 +33,12 @@ public class RoleController {
     public ResponseEntity<Role> getRoleById(@PathVariable Short id) {
         Optional<Role> optionalRole = roleService.findById(id);
 
-        if (optionalRole.isPresent()) {
-            Role role = optionalRole.get();
-            return ResponseEntity.ok(role);
-        } else {
+        if (!optionalRole.isPresent()) {
             return ResponseEntity.notFound().build();
         }
+
+        Role role = optionalRole.get();
+        return ResponseEntity.ok(role);
     }
 
     @PostMapping("/create-role")
@@ -48,26 +48,27 @@ public class RoleController {
     }
  
     @PutMapping("update-role/{id}")
-     public ResponseEntity<Role> updateRole(@PathVariable Short id, @RequestBody Role updatedRole) {
+    public ResponseEntity<Role> updateRole(@PathVariable Short id, @RequestBody Role updatedRole) {
         Optional<Role> optionalRole = roleService.findById(id);
 
-        if (optionalRole.isPresent()) {
-            Role role = optionalRole.get();
-            role.setRolename(updatedRole.getRolename());
-            roleService.save(role);
-            return ResponseEntity.ok(role);
-        } else {
+        if (!optionalRole.isPresent()) {
             return ResponseEntity.notFound().build();
         }
+
+        Role role = optionalRole.get();
+        role.setRolename(updatedRole.getRolename());
+        roleService.save(role);
+
+        return ResponseEntity.ok(role);
     }
 
     @DeleteMapping("/delete-role/{id}")
     public ResponseEntity<Void> deleteRole(@PathVariable Short id) {
         if (roleService.existsById(id)) {
-            roleService.deleteById(id);
-            return ResponseEntity.ok().body(null);
-        } else {
             return ResponseEntity.notFound().build();
         }
+        
+        roleService.deleteById(id);
+        return ResponseEntity.ok(null);
     }
 }
