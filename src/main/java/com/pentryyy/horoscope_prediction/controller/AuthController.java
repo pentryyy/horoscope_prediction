@@ -3,8 +3,10 @@ package com.pentryyy.horoscope_prediction.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pentryyy.horoscope_prediction.dto.JwtAuthenticationResponse;
 import com.pentryyy.horoscope_prediction.dto.SignInRequest;
 import com.pentryyy.horoscope_prediction.dto.SignUpRequest;
-import com.pentryyy.horoscope_prediction.model.ResponseMessage;
 import com.pentryyy.horoscope_prediction.model.RoleEnum;
 import com.pentryyy.horoscope_prediction.model.User;
 import com.pentryyy.horoscope_prediction.service.AuthenticationService;
@@ -46,8 +47,12 @@ public class AuthController {
         try {
             return ResponseEntity.ok(authenticationService.signUp(request));
         } catch (Exception e) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("message", e.getMessage());
+           
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                                 .body(new ResponseMessage(e.getMessage()));
+                                 .contentType(MediaType.APPLICATION_JSON)
+                                 .body(jsonObject.toString());   
         }
     }
 
@@ -64,13 +69,18 @@ public class AuthController {
     }
 
     @DeleteMapping("/delete-user/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        if (userService.existsById(id)) {
-            userService.deleteById(id);
-            return ResponseEntity.ok(null);
-        } else {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        if (!userService.existsById(id)) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("message", "Пользователь не найден");
+           
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                 .contentType(MediaType.APPLICATION_JSON)
+                                 .body(jsonObject.toString());   
         }
+        
+        userService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/change-role-{role}/{id}")
@@ -78,7 +88,12 @@ public class AuthController {
         Optional<User> optionalUser = userService.findById(id);
 
         if (!optionalUser.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("Пользователь не найден"));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("message", "Пользователь не найден");
+           
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                 .contentType(MediaType.APPLICATION_JSON)
+                                 .body(jsonObject.toString());   
         }
         
         User user = optionalUser.get();
@@ -90,8 +105,8 @@ public class AuthController {
                 user.setRole(RoleEnum.ROLE_USER.getValue());
                 break;
         }
-        userService.save(user);
 
-        return ResponseEntity.ok(new ResponseMessage("Роль успешно обновлена"));
+        userService.save(user);
+        return ResponseEntity.accepted().build();
     }
 }

@@ -2,7 +2,6 @@ package com.pentryyy.horoscope_prediction.service;
 
 import com.pentryyy.horoscope_prediction.repository.UserRepository;
 import com.pentryyy.horoscope_prediction.model.User;
-import com.pentryyy.horoscope_prediction.model.RoleEnum;
 
 import lombok.RequiredArgsConstructor;
 
@@ -64,11 +63,5 @@ public class UserService {
     public User getCurrentUser() {
         var username = SecurityContextHolder.getContext().getAuthentication().getName();
         return getByUsername(username);
-    }
-
-    public void getAdmin() {
-        var user = getCurrentUser();
-        user.setRole(RoleEnum.ROLE_ADMIN.getValue());
-        save(user);
     }
 }
