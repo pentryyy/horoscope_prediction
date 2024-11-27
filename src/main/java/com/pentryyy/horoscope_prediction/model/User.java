@@ -32,9 +32,6 @@ public class User implements UserDetails {
     @Column(name = "email", unique = true, nullable = false)
     private String email;
    
-    // @Column(name = "role", nullable = false)
-    // private Short role;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role", nullable = false)
     private Role role;
