@@ -6,10 +6,14 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 <<<<<<< HEAD
+<<<<<<< HEAD
 		<version>3.3.4</version>
 =======
 		<version>3.4.0</version>
 >>>>>>> 7895b5f (Теперь данные роли беруться из бд)
+=======
+		<version>3.3.5</version>
+>>>>>>> d8b336b4c924e0c5e2568a7b5c2fd8f663be3d56
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.pentryyy</groupId>
@@ -34,6 +38,12 @@
 		<java.version>22</java.version>
 	</properties>
 	<dependencies>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
