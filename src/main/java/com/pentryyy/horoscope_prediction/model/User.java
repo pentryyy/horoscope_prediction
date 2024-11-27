@@ -2,9 +2,11 @@ package com.pentryyy.horoscope_prediction.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -16,7 +18,6 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "users")
 public class User implements UserDetails {
-       
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,8 +37,8 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String roleName = RoleEnum.getNameByValue(this.role);
-        return List.of(new SimpleGrantedAuthority(roleName));
+        String rolename = RoleEnum.getNameByValue(this.role);
+        return List.of(new SimpleGrantedAuthority(rolename));
     }
 
     @Override

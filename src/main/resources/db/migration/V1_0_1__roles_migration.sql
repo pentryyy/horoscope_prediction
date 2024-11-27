@@ -1,15 +1,6 @@
--- Table: for_horoscope_db.roles
-
--- DROP TABLE IF EXISTS for_horoscope_db.roles;
-
-CREATE TABLE IF NOT EXISTS for_horoscope_db.roles
-(
-    id smallint NOT NULL,
-    rolename character(50) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT roles_pkey PRIMARY KEY (id)
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS for_horoscope_db.roles
-    OWNER to postgres;
+CREATE TABLE IF NOT EXISTS roles (
+    id SMALLINT NOT NULL,          -- Идентификатор
+    rolename VARCHAR(50) NOT NULL, -- Название роли, VARCHAR заменяет character
+    PRIMARY KEY (id),              -- Первичный ключ
+    UNIQUE KEY (rolename)          -- Уникальный индекс для rolename
+);

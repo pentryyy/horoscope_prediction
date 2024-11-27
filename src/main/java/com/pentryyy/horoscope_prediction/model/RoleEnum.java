@@ -1,6 +1,9 @@
 package com.pentryyy.horoscope_prediction.model;
 
-public enum RoleEnum {
+import lombok.Getter;
+
+@Getter
+public enum RoleEnum {  
     ROLE_USER((short) 1),
     ROLE_ADMIN((short) 2);
 
@@ -9,11 +12,7 @@ public enum RoleEnum {
     RoleEnum(Short value) {
         this.value = value;
     }
-
-    public Short getValue() {
-        return value;
-    }
-
+ 
     public static String getNameByValue(Short value) {
         for (RoleEnum role : RoleEnum.values()) {
             if (role.getValue() == value) {

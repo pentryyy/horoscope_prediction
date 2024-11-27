@@ -1,8 +1,6 @@
 package com.pentryyy.horoscope_prediction.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,14 +35,13 @@ public class RoleService {
         return roleRepository.existsById(id);
     }
 
-    public Map<Short, String> rolesData(){
-        Map<Short, String> mapOfRoles = new HashMap<>();
-        List<Role> roles = roleRepository.findAll();
-    
-        for (Role role : roles) {
-            mapOfRoles.put(role.getId(), role.getRolename());
-        }
-    
-        return mapOfRoles;
+    public Short getIdByRolename(String rolename) {
+        Optional<Role> role = roleRepository.findByRolename(rolename);
+        return role.map(Role::getId).orElse(null);
+    }
+
+    public String getRolenameById(Short id) {
+        Optional<Role> role = roleRepository.findById(id);
+        return role.map(Role::getRolename).orElse(null);
     }
 }

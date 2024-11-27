@@ -1,12 +1,12 @@
 database:
-  username: postgres
+  username: root
   password: 1234pass
 spring:
   application:
     name: horoscope-prediction
   datasource:
-    driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/for_horoscope_db
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/for_horoscope_db
     username: ${database.username}
     password: ${database.password}
   jpa:
