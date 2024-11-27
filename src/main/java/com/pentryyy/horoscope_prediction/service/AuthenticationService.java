@@ -3,7 +3,7 @@ package com.pentryyy.horoscope_prediction.service;
 import com.pentryyy.horoscope_prediction.dto.JwtAuthenticationResponse;
 import com.pentryyy.horoscope_prediction.dto.SignInRequest;
 import com.pentryyy.horoscope_prediction.dto.SignUpRequest;
-import com.pentryyy.horoscope_prediction.model.RoleEnum;
+import com.pentryyy.horoscope_prediction.model.Role;
 import com.pentryyy.horoscope_prediction.model.User;
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +29,9 @@ public class AuthenticationService {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private RoleService roleService;
+
     /**
      * Регистрация пользователя
      *
@@ -36,11 +39,13 @@ public class AuthenticationService {
      * @return токен
      */
     public JwtAuthenticationResponse signUp(SignUpRequest request) {
+        Role role = roleService.findByRolename("ROLE_USER");
+
         User user = User.builder()
                         .username(request.getUsername())
                         .email(request.getEmail())
                         .password(passwordEncoder.encode(request.getPassword()))
-                        .role(RoleEnum.ROLE_USER.getValue())
+                        .role(role)
                         .build();
 
         userService.saveNewUser(user);

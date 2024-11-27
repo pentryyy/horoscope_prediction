@@ -1,6 +1,7 @@
 package com.pentryyy.horoscope_prediction.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +36,8 @@ public class RoleService {
         return roleRepository.existsById(id);
     }
 
-    public Short getIdByRolename(String rolename) {
-        Optional<Role> role = roleRepository.findByRolename(rolename);
-        return role.map(Role::getId).orElse(null);
-    }
-
-    public String getRolenameById(Short id) {
-        Optional<Role> role = roleRepository.findById(id);
-        return role.map(Role::getRolename).orElse(null);
+    public Role findByRolename(String rolename){
+        return roleRepository.findByRolename(rolename)
+                             .orElseThrow(() -> new NoSuchElementException("Роль '" + rolename + "' не найдена"));
     }
 }

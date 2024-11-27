@@ -32,13 +32,16 @@ public class User implements UserDetails {
     @Column(name = "email", unique = true, nullable = false)
     private String email;
    
-    @Column(name = "role", nullable = false)
-    private Short role;
+    // @Column(name = "role", nullable = false)
+    // private Short role;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role", nullable = false)
+    private Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String rolename = RoleEnum.getNameByValue(this.role);
-        return List.of(new SimpleGrantedAuthority(rolename));
+        return List.of(new SimpleGrantedAuthority(this.role.getRolename()));
     }
 
     @Override

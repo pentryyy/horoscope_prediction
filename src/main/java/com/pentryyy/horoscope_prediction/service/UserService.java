@@ -5,14 +5,12 @@ import com.pentryyy.horoscope_prediction.model.User;
 
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service; 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
@@ -20,10 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-
-     public List<User> findAll() {
-        return userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-    }
 
     public void deleteById(Long id) {
         userRepository.deleteById(id);
