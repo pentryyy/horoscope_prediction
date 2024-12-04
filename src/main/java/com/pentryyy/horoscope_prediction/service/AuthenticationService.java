@@ -49,6 +49,8 @@ public class AuthenticationService {
                         .email(request.getEmail())
                         .password(passwordEncoder.encode(request.getPassword()))
                         .role(role)
+                        .birthDate(request.getBirthDate())
+                        .gender(request.getGender())
                         .build();
 
         userService.saveNewUser(user);

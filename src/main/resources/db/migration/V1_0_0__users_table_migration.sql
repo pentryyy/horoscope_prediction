@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(100) NOT NULL,
     role SMALLINT NOT NULL,
     is_enabled BOOLEAN NOT NULL DEFAULT TRUE, -- Поле для включения/отключения пользователя
-    birth_date DATE,                          -- Поле даты рождения для опрпделения знака зодиака
-    gender VARCHAR(10),                       -- Например, 'Мужчина', 'Женщина'
+    birth_date DATE NOT NULL,                 -- Поле даты рождения для опрпделения знака зодиака
+    gender VARCHAR(10) NOT NULL,              -- Например, 'Мужчина', 'Женщина'
     PRIMARY KEY (id),                         -- Первичный ключ
     UNIQUE KEY (email),                       -- Уникальный индекс на email
     UNIQUE KEY (username)                     -- Уникальный индекс на username

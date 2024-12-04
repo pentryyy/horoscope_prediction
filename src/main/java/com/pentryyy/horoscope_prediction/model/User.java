@@ -41,10 +41,10 @@ public class User implements UserDetails {
     @Column(name = "is_enabled", nullable = false)
     private Boolean isEnabled = true;
 
-    @Column(name = "birth_date")
+    @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
-    @Column(name = "gender")
+    @Column(name = "gender", nullable = false)
     private String gender;
 
     @Override

@@ -1,7 +1,6 @@
 package com.pentryyy.horoscope_prediction.controller;
 
-import java.time.LocalDate;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 
 import org.json.JSONObject;
@@ -9,12 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pentryyy.horoscope_prediction.model.Role;
@@ -31,18 +29,41 @@ public class UserController {
     @Autowired
     private RoleService roleService;
     
-    @PatchMapping("/change-role/{id}")
-    public ResponseEntity<?> changeRole(@PathVariable Long id, @RequestParam Short roleId) {
+    @GetMapping("/get-all-users")
+    public List<User> getAllUsers() {
+        List<User> usersList = userService.findAll();
+        return usersList;
+    }
+
+    @GetMapping("/get-user/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
         Optional<User> optionalUser = userService.findById(id);
-        Optional<Role> optionalRole = roleService.findById(roleId);
+
+        if (!optionalUser.isPresent()) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("message", "Пользователь не найден");
+           
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                 .contentType(MediaType.APPLICATION_JSON)
+                                 .body(jsonObject.toString());   
+        }
+
+        User user = optionalUser.get();
+        return ResponseEntity.ok(user);
+    }
+
+    @PatchMapping("/change-role/{id}")
+    public ResponseEntity<?> changeRole(@PathVariable Long id,  @RequestBody Role requestRole) {                
+        Optional<User> optionalUser = userService.findById(id);
+        Optional<Role> optionalRole = roleService.findById(requestRole.getId());
 
         // Пытаемся найти пользователя
         if (!optionalUser.isPresent()) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("message", "Пользователь не найден");
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .body(jsonObject.toString());
+                                 .contentType(MediaType.APPLICATION_JSON)
+                                 .body(jsonObject.toString());
         }
         User user = optionalUser.get();
 
@@ -52,8 +73,8 @@ public class UserController {
             jsonObject.put("message", "Роль не найдена");
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .body(jsonObject.toString());
+                                 .contentType(MediaType.APPLICATION_JSON)
+                                 .body(jsonObject.toString());
         }
         Role role = optionalRole.get();
 
@@ -64,8 +85,8 @@ public class UserController {
         jsonObject.put("id", role.getId());
 
         return ResponseEntity.ok()
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .body(jsonObject.toString());
+                             .contentType(MediaType.APPLICATION_JSON)
+                             .body(jsonObject.toString());
     }
 
     @PatchMapping("/disable-user/{id}")
@@ -77,8 +98,8 @@ public class UserController {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("message", "Пользователь не найден");
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .body(jsonObject.toString());
+                                 .contentType(MediaType.APPLICATION_JSON)
+                                 .body(jsonObject.toString());
         }
         User user = optionalUser.get();
         
@@ -86,8 +107,8 @@ public class UserController {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("message", "Пользователь уже отключен");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .body(jsonObject.toString());
+                                 .contentType(MediaType.APPLICATION_JSON)
+                                 .body(jsonObject.toString());
         }
 
         user.setIsEnabled(false);
@@ -100,48 +121,33 @@ public class UserController {
                              .body(jsonObject.toString());
     }
 
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id,
-                                        @RequestBody Map<String, Object> updates) {
+    @PatchMapping("/enable-user/{id}")
+    public ResponseEntity<?> enableUser(@PathVariable Long id) {
         Optional<User> optionalUser = userService.findById(id);
-                                            
+
         // Пытаемся найти пользователя
         if (!optionalUser.isPresent()) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("message", "Пользователь не найден");
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .body(jsonObject.toString());
+                                 .contentType(MediaType.APPLICATION_JSON)
+                                 .body(jsonObject.toString());
         }
         User user = optionalUser.get();
-
-        // Обновляем поля, если они присутствуют в запросе
-        if (updates.containsKey("username")) {
-            String username = (String) updates.get("username");
-            user.setUsername(username);
+        
+        if (user.getIsEnabled()) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("message", "Пользователь уже активен");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                 .contentType(MediaType.APPLICATION_JSON)
+                                 .body(jsonObject.toString());
         }
 
-        if (updates.containsKey("email")) {
-            String email = (String) updates.get("email");
-            user.setEmail(email);
-        }
-
-        if (updates.containsKey("birthDate")) {
-            String birthDateStr = (String) updates.get("birthDate");
-            LocalDate birthDate = LocalDate.parse(birthDateStr);
-            user.setBirthDate(birthDate);
-        }
-
-        if (updates.containsKey("gender")) {
-            String gender = (String) updates.get("gender");
-            user.setGender(gender);
-        }
+        user.setIsEnabled(true);
         userService.save(user);
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("message", "Пользователь обновлен успешно");
-
+        jsonObject.put("message", "Пользователь активен");
         return ResponseEntity.ok()
                              .contentType(MediaType.APPLICATION_JSON)
                              .body(jsonObject.toString());
