@@ -10,9 +10,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,24 +51,25 @@ public class RoleController {
 
     @PostMapping("/create-role")
     public ResponseEntity<?> createRole(@RequestBody Role role) {
-       JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject = new JSONObject();
+        Optional<Role> existRole = roleService.findByRolename(role.getRolename());
 
-        try {
+        if (!existRole.isPresent()){
             roleService.save(role);
 
             jsonObject.put("id", role.getId());
             return ResponseEntity.status(HttpStatus.CREATED)
                                  .contentType(MediaType.APPLICATION_JSON)
                                  .body(jsonObject.toString());   
-        } catch (Exception e) {
-            jsonObject.put("message", "Роль с таким названием уже существует");
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .body(jsonObject.toString());   
         }
+ 
+        jsonObject.put("message", "Роль с таким названием уже существует");
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .body(jsonObject.toString());   
     }
  
-    @PutMapping("update-role/{id}")
+    @PatchMapping("update-role/{id}")
     public ResponseEntity<?> updateRole(@PathVariable Short id, @RequestBody Role updatedRole) {
         Optional<Role> optionalRole = roleService.findById(id);
 
@@ -80,8 +81,8 @@ public class RoleController {
                                  .contentType(MediaType.APPLICATION_JSON)
                                  .body(jsonObject.toString());   
         }
-
         Role role = optionalRole.get();
+
         role.setRolename(updatedRole.getRolename());
         roleService.save(role);
 

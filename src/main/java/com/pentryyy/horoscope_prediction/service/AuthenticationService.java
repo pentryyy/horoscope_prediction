@@ -7,6 +7,8 @@ import com.pentryyy.horoscope_prediction.model.Role;
 import com.pentryyy.horoscope_prediction.model.User;
 import lombok.RequiredArgsConstructor;
 
+import java.util.NoSuchElementException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,7 +41,8 @@ public class AuthenticationService {
      * @return токен
      */
     public JwtAuthenticationResponse signUp(SignUpRequest request) {
-        Role role = roleService.findByRolename("ROLE_USER");
+        Role role = roleService.findByRolename("ROLE_USER")
+                               .orElseThrow(() -> new NoSuchElementException("Роль не найдена"));
 
         User user = User.builder()
                         .username(request.getUsername())

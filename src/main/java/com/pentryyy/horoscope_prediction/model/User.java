@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -36,6 +37,16 @@ public class User implements UserDetails {
     @JoinColumn(name = "role", nullable = false)
     private Role role;
 
+    @Builder.Default
+    @Column(name = "is_enabled", nullable = false)
+    private Boolean isEnabled = true;
+
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
+
+    @Column(name = "gender")
+    private String gender;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(this.role.getRolename()));
@@ -58,6 +69,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.isEnabled;
     }
 }
