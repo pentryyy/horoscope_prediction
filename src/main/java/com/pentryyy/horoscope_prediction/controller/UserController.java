@@ -82,7 +82,8 @@ public class UserController {
         userService.save(user);
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", role.getId());
+        jsonObject.put("rolename", role.getRolename())
+                  .put("user_id", user.getId());
 
         return ResponseEntity.ok()
                              .contentType(MediaType.APPLICATION_JSON)
