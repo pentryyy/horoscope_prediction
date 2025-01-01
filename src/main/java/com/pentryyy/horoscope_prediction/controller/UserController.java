@@ -1,8 +1,6 @@
 package com.pentryyy.horoscope_prediction.controller;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.json.JSONObject;
@@ -21,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pentryyy.horoscope_prediction.dto.PassChangeRequest;
+import com.pentryyy.horoscope_prediction.dto.UserUpdateRequest;
 import com.pentryyy.horoscope_prediction.model.Role;
 import com.pentryyy.horoscope_prediction.model.User;
 import com.pentryyy.horoscope_prediction.service.RoleService;
@@ -167,7 +166,7 @@ public class UserController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody Map<String, Object> requestData) {        
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody @Valid UserUpdateRequest request) {        
         Optional<User> optionalUser = userService.findById(id);
 
         // Пытаемся найти пользователя
@@ -180,19 +179,10 @@ public class UserController {
         }
         User user = optionalUser.get();
         
-        // Обновляем данные пользователя если поля не пусты
-        if (requestData.containsKey("username")) {
-            user.setUsername((String) requestData.get("username"));
-        }
-        if (requestData.containsKey("email")) {
-            user.setEmail((String) requestData.get("email"));
-        }
-        if (requestData.containsKey("gender")) {
-            user.setGender((String) requestData.get("gender"));
-        }
-        if (requestData.containsKey("birthDate")) {
-            user.setBirthDate(LocalDate.parse((String) requestData.get("birthDate")));
-        }
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setGender(request.getGender());
+        user.setBirthDate(request.getBirthDate());
         userService.save(user);
 
         JSONObject jsonObject = new JSONObject();
