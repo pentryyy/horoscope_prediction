@@ -1,10 +1,10 @@
 package com.pentryyy.horoscope_prediction.controller;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pentryyy.horoscope_prediction.model.Role;
@@ -27,9 +28,13 @@ public class RoleController {
     private RoleService roleService;
 
     @GetMapping("/get-all-roles")
-    public List<Role> getAllRoles() {
-        List<Role> rolesList = roleService.findAll();
-        return rolesList;
+    public ResponseEntity<Page<Role>> getAllRoles(@RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "10") int limit,
+                                                  @RequestParam(defaultValue = "id") String sortBy,
+                                                  @RequestParam(defaultValue = "ASC") String sortOrder) {
+        
+        Page<Role> roles = roleService.getAllRoles(page, limit, sortBy, sortOrder);
+        return ResponseEntity.ok(roles);
     }
 
     @GetMapping("/get-role/{id}")

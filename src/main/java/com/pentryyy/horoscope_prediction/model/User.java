@@ -1,5 +1,7 @@
 package com.pentryyy.horoscope_prediction.model;
 
+import com.pentryyy.horoscope_prediction.enumeration.GenderType;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -44,8 +46,9 @@ public class User implements UserDetails {
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "gender", nullable = false)
-    private String gender;
+    private GenderType gender;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

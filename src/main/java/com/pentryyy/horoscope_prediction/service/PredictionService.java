@@ -3,6 +3,7 @@ package com.pentryyy.horoscope_prediction.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.pentryyy.horoscope_prediction.enumeration.PredictionType;
@@ -44,11 +45,19 @@ public class PredictionService {
         return predictionRepository.save(newPrediction);
     }
 
-    public Page<Prediction> getAllPredictions(int page, int limit, PredictionType type) {
+    public Page<Prediction> getAllPredictions(int page, 
+                                              int limit, 
+                                              String sortBy, 
+                                              String sortOrder,
+                                              PredictionType type) {
+        
+        Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name())
+            ? Sort.by(sortBy).ascending()
+            : Sort.by(sortBy).descending();
         if (type != null) {
-            return predictionRepository.findByPredictionType(type, PageRequest.of(page, limit));
+            return predictionRepository.findByPredictionType(type, PageRequest.of(page, limit, sort));
         } else {
-            return predictionRepository.findAll(PageRequest.of(page, limit));
+            return predictionRepository.findAll(PageRequest.of(page, limit, sort));
         }
     }
 }

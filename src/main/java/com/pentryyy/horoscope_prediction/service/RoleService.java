@@ -1,9 +1,10 @@
 package com.pentryyy.horoscope_prediction.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +24,15 @@ public class RoleService {
         return roleRepository.findById(id);
     }
 
-    public List<Role> findAll() {
-        return roleRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    public Page<Role> getAllRoles(int page, 
+                                  int limit, 
+                                  String sortBy, 
+                                  String sortOrder) {
+        
+        Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name())
+            ? Sort.by(sortBy).ascending()
+            : Sort.by(sortBy).descending();
+        return roleRepository.findAll(PageRequest.of(page, limit, sort));
     }
 
     public void deleteById(Short id) {

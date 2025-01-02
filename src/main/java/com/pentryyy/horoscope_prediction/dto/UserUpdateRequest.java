@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
 
+import com.pentryyy.horoscope_prediction.enumeration.GenderType;
+
 @Data
 @Schema(description = "Запрос на обновление данных пользователя")
 public class UserUpdateRequest {
@@ -19,10 +21,8 @@ public class UserUpdateRequest {
     @Email(message = "Email адрес должен быть в формате user@example.com")
     private String email;
     
-    @Schema(description = "Пол пользователя", example = "Мужчина")
-    @NotBlank(message = "Пол не может быть пустым")
-    @Pattern(regexp = "^(Мужчина|Женщина)$", message = "Пол должен быть 'Мужчина' или 'Женщина'")
-    private String gender;
+    @Schema(description = "Пол пользователя", example = "MALE")
+    private GenderType gender;
 
     @Schema(description = "Дата рождения пользователя", example = "2003-05-23")
     @NotNull(message = "Дата рождения не может быть пустой")

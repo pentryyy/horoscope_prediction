@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
 
+import com.pentryyy.horoscope_prediction.enumeration.GenderType;
+
 @Data
 @Schema(description = "Запрос на регистрацию")
 public class SignUpRequest {
@@ -24,10 +26,8 @@ public class SignUpRequest {
     @Size(min = 8, max = 255, message = "Длина пароля должна быть от 8 до 255 символов")
     private String password;
 
-    @Schema(description = "Пол пользователя", example = "Мужчина")
-    @NotBlank(message = "Пол не может быть пустым")
-    @Pattern(regexp = "^(Мужчина|Женщина)$", message = "Пол должен быть 'Мужчина' или 'Женщина'")
-    private String gender;
+    @Schema(description = "Пол пользователя", example = "MALE")
+    private GenderType gender;
 
     @Schema(description = "Дата рождения пользователя", example = "2003-05-23")
     @NotNull(message = "Дата рождения не может быть пустой")

@@ -28,7 +28,8 @@ public class GlobalExceptionHandler {
             String fieldName    = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             
-            errors.put(fieldName, errorMessage);
+            errors.put("error", "Некорректное значение для поля: " + fieldName);
+            errors.put("message", errorMessage);
         });
         return errors;
     }

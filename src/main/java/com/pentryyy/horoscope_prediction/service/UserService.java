@@ -5,13 +5,14 @@ import com.pentryyy.horoscope_prediction.model.User;
 
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service; 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -61,7 +62,14 @@ public class UserService {
         return getByUsername(username);
     }
 
-    public List<User> findAll() {
-        return userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    public Page<User> getAllUsers(int page, 
+                                  int limit,
+                                  String sortBy, 
+                                  String sortOrder) {
+        
+        Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name())
+            ? Sort.by(sortBy).ascending()
+            : Sort.by(sortBy).descending();
+        return userRepository.findAll(PageRequest.of(page, limit, sort));
     }
 }

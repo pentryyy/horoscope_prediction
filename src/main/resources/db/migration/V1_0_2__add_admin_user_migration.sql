@@ -5,4 +5,4 @@ VALUES ('admin',
         '$2a$12$94myWgI693.i9wyF4q20MuZUs4QZ1REzej6wJAxKsK5sVdGCqh48q',
         2,
         '2002-04-21', 
-        'Мужчина');
+        'MALE');

@@ -92,9 +92,11 @@ public class PredictionController {
     @GetMapping("/get-all-predictions")
     public ResponseEntity<Page<Prediction>> getAllPredictions(@RequestParam(defaultValue = "0") int page,
                                                               @RequestParam(defaultValue = "10") int limit,
+                                                              @RequestParam(defaultValue = "id") String sortBy,
+                                                              @RequestParam(defaultValue = "ASC") String sortOrder,
                                                               @RequestParam(required = false) PredictionType type) {
         
-        Page<Prediction> predictions = predictionService.getAllPredictions(page, limit, type);
+        Page<Prediction> predictions = predictionService.getAllPredictions(page, limit, sortBy, sortOrder, type);
         return ResponseEntity.ok(predictions);
     }
 }
