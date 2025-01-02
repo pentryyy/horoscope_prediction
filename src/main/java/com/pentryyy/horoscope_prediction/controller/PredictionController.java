@@ -10,8 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.pentryyy.horoscope_prediction.enumeration.PredictionType;
 import com.pentryyy.horoscope_prediction.model.Prediction;
-import com.pentryyy.horoscope_prediction.model.PredictionType;
 import com.pentryyy.horoscope_prediction.service.PredictionService;
 
 @RestController

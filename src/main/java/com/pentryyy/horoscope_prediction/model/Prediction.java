@@ -7,6 +7,8 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.pentryyy.horoscope_prediction.enumeration.PredictionType;
+
 @Entity
 @Getter
 @Setter

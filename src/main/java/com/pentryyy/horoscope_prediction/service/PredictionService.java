@@ -5,8 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.pentryyy.horoscope_prediction.enumeration.PredictionType;
 import com.pentryyy.horoscope_prediction.model.Prediction;
-import com.pentryyy.horoscope_prediction.model.PredictionType;
 import com.pentryyy.horoscope_prediction.repository.PredictionRepository;
 
 import java.time.LocalDateTime;
