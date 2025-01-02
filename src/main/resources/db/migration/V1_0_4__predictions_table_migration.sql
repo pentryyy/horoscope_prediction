@@ -1,0 +1,9 @@
+-- Создание таблицы
+CREATE TABLE IF NOT EXISTS predictions (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    prediction_text VARCHAR(500) NOT NULL,
+    prediction_date DATE NOT NULL,
+    prediction_type ENUM('FUNNY', 'USEFUL', 'MIXED') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);

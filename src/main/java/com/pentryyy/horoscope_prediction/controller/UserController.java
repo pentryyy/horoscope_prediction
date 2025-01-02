@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pentryyy.horoscope_prediction.dto.PassChangeRequest;
+import com.pentryyy.horoscope_prediction.dto.PasswordChangeRequest;
 import com.pentryyy.horoscope_prediction.dto.UserUpdateRequest;
 import com.pentryyy.horoscope_prediction.model.Role;
 import com.pentryyy.horoscope_prediction.model.User;
@@ -193,7 +193,7 @@ public class UserController {
     }
 
     @PatchMapping("/change-pass/{id}")
-    public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody @Valid PassChangeRequest request) {
+    public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody @Valid PasswordChangeRequest request) {
         Optional<User> optionalUser = userService.findById(id);
 
         // Пытаемся найти пользователя
