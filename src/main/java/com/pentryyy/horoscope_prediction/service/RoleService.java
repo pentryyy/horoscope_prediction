@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.pentryyy.horoscope_prediction.exception.RoleDoesNotExistException;
+import com.pentryyy.horoscope_prediction.exception.RolenameAlreadyExistsException;
 import com.pentryyy.horoscope_prediction.model.Role;
 import com.pentryyy.horoscope_prediction.repository.RoleRepository;
 
@@ -16,11 +17,7 @@ import com.pentryyy.horoscope_prediction.repository.RoleRepository;
 public class RoleService {
     @Autowired
     private RoleRepository roleRepository;
-    
-    public Role save(Role role) {
-        return roleRepository.save(role);
-    }
- 
+
     public Role findById(Short id) {
         return roleRepository.findById(id)
                              .orElseThrow(() -> new RoleDoesNotExistException(id));
@@ -38,15 +35,37 @@ public class RoleService {
         return roleRepository.findAll(PageRequest.of(page, limit, sort));
     }
 
-    public void deleteById(Short id) {
-        roleRepository.deleteById(id);
-    }
-
-    public boolean existsById(Short id) {
-        return roleRepository.existsById(id);
-    }
-
     public Optional<Role> findByRolename(String rolename){
         return roleRepository.findByRolename(rolename);
+    }
+
+    public void createRole(Role request) {
+        if (roleRepository.existsByRolename(request.getRolename())) {
+            throw new RolenameAlreadyExistsException(request.getRolename());
+        }
+
+        roleRepository.save(request);
+    }
+
+    public void updateRole(
+        Short id, 
+        Role request) {
+        
+        Role role = findById(id);
+
+        if (roleRepository.existsByRolename(request.getRolename())) {
+            throw new RolenameAlreadyExistsException(request.getRolename());
+        }
+
+        role.setRolename(request.getRolename());
+        roleRepository.save(role);
+    }
+
+    public void deleteRole(Short id) {
+        if (!roleRepository.existsById(id)) {
+            throw new RoleDoesNotExistException(id);
+        }
+
+        roleRepository.deleteById(id);
     }
 }

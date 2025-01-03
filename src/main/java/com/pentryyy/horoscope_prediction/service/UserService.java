@@ -66,6 +66,14 @@ public class UserService {
         
         User user = findById(id);
 
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new UsernameAlreadyExistsException(request.getUsername());
+        }
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new EmailAlreadyExistsException(request.getEmail());
+        }
+
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setGender(request.getGender());

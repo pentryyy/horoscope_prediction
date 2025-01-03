@@ -1,7 +1,5 @@
 package com.pentryyy.horoscope_prediction.controller;
 
-import java.util.Optional;
-
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -49,55 +47,33 @@ public class RoleController {
     }
 
     @PostMapping("/create-role")
-    public ResponseEntity<?> createRole(@RequestBody Role role) {
+    public ResponseEntity<?> createRole(@RequestBody Role request) {
+        roleService.createRole(request);
+
         JSONObject jsonObject = new JSONObject();
-        Optional<Role> existRole = roleService.findByRolename(role.getRolename());
-
-        if (!existRole.isPresent()){
-            roleService.save(role);
-
-            jsonObject.put("id", role.getId());
-            return ResponseEntity.status(HttpStatus.CREATED)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .body(jsonObject.toString());   
-        }
- 
-        jsonObject.put("message", "Роль с таким названием уже существует");
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .body(jsonObject.toString());   
+        jsonObject.put("id", request.getId());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                             .contentType(MediaType.APPLICATION_JSON)
+                             .body(jsonObject.toString());   
     }
  
     @PatchMapping("update-role/{id}")
     public ResponseEntity<?> updateRole(
         @PathVariable Short id, 
-        @RequestBody Role updatedRole) {
+        @RequestBody Role request) {
         
-        Role role = roleService.findById(id);
-
-        role.setRolename(updatedRole.getRolename());
-        roleService.save(role);
+        roleService.updateRole(id, request);
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", role.getId());
-        
+        jsonObject.put("message", "Данные роли обновлены");
         return ResponseEntity.ok()
                              .contentType(MediaType.APPLICATION_JSON)
                              .body(jsonObject.toString());   
     }
 
     @DeleteMapping("/delete-role/{id}")
-    public ResponseEntity<?> deleteRole(@PathVariable Short id) {
-        if (!roleService.existsById(id)) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "Роль не найдена");
-            
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .body(jsonObject.toString());   
-        }
-        
-        roleService.deleteById(id);
+    public ResponseEntity<?> deleteRole(@PathVariable Short id) {    
+        roleService.deleteRole(id);
         return ResponseEntity.noContent().build();
     }
 }
