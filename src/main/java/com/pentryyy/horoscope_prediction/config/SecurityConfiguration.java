@@ -45,6 +45,9 @@ public class SecurityConfiguration {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/roles/**").hasRole("ADMIN")
                         .requestMatchers("/users/**").hasRole("ADMIN")
+                        .requestMatchers(
+                            "/predictions/get-prediction/**", 
+                                        "/predictions/get-all-predictions").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/predictions/**").hasRole("ADMIN")
                         .requestMatchers("/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/endpoint", "/admin/**").hasRole("ADMIN")

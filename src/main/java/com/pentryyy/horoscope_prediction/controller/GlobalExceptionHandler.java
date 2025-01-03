@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.pentryyy.horoscope_prediction.exception.EmailAlreadyExistsException;
+import com.pentryyy.horoscope_prediction.exception.PredictionDoesNotExistException;
 import com.pentryyy.horoscope_prediction.exception.RoleDoesNotExistException;
 import com.pentryyy.horoscope_prediction.exception.RolenameAlreadyExistsException;
 import com.pentryyy.horoscope_prediction.exception.UserAlreadyDisabledException;
@@ -116,5 +117,12 @@ public class GlobalExceptionHandler {
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(PredictionDoesNotExistException.class)
+    public ResponseEntity<Map<String, String>> handlePredictionDoesNotExistException(PredictionDoesNotExistException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 }

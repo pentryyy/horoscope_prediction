@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 import com.pentryyy.horoscope_prediction.enumeration.GenderType;
 import com.pentryyy.horoscope_prediction.enumeration.PredictionType;
 import com.pentryyy.horoscope_prediction.enumeration.ZodiacType;
+import com.pentryyy.horoscope_prediction.exception.PredictionDoesNotExistException;
 import com.pentryyy.horoscope_prediction.model.Prediction;
 import com.pentryyy.horoscope_prediction.repository.PredictionRepository;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class PredictionService {
@@ -21,34 +21,30 @@ public class PredictionService {
     @Autowired
     private PredictionRepository predictionRepository;
 
-    public Prediction createPrediction(Prediction prediction) {
-        prediction.setCreatedAt(LocalDateTime.now());
-        prediction.setUpdatedAt(LocalDateTime.now());
-        return predictionRepository.save(prediction);
+    public Prediction createPrediction(Prediction request) {
+        request.setCreatedAt(LocalDateTime.now());
+        request.setUpdatedAt(LocalDateTime.now());
+        return predictionRepository.save(request);
     }
 
-    public boolean existsById(Long id) {
-        return predictionRepository.existsById(id);
+    public Prediction findById(Long id) {
+        return predictionRepository.findById(id)
+                                   .orElseThrow(() -> new PredictionDoesNotExistException(id));
+
     }
 
-    public void deleteById(Long id) {
-        predictionRepository.deleteById(id);
-    }
-
-    public Optional<Prediction> findById(Long id) {
-        return predictionRepository.findById(id);
-    }
-
-    public Prediction updatePrediction(
-        Prediction newPrediction, 
-        Prediction prediction) {
+    public void updatePrediction(
+        Long id, 
+        Prediction request) {
         
-        newPrediction.setPredictionText(prediction.getPredictionText());
-        newPrediction.setGender(prediction.getGender());
-        newPrediction.setZodiac(prediction.getZodiac());
-        newPrediction.setPredictionType(prediction.getPredictionType());
-        newPrediction.setUpdatedAt(LocalDateTime.now());
-        return predictionRepository.save(newPrediction);
+        Prediction prediction = findById(id);
+
+        prediction.setPredictionText(request.getPredictionText());
+        prediction.setGender(request.getGender());
+        prediction.setZodiac(request.getZodiac());
+        prediction.setPredictionType(request.getPredictionType());
+        prediction.setUpdatedAt(LocalDateTime.now());
+        predictionRepository.save(prediction);
     }
 
     public Page<Prediction> getAllPredictions(
@@ -71,4 +67,11 @@ public class PredictionService {
             PageRequest.of(page, limit, sort));
     }
 
+    public void deletePrediction(Long id) {
+        if (!predictionRepository.existsById(id)) {
+            throw new PredictionDoesNotExistException(id);
+        }
+
+        predictionRepository.deleteById(id);
+    }
 }

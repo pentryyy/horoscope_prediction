@@ -39,12 +39,12 @@ public class RoleService {
         return roleRepository.findByRolename(rolename);
     }
 
-    public void createRole(Role request) {
+    public Role createRole(Role request) {
         if (roleRepository.existsByRolename(request.getRolename())) {
             throw new RolenameAlreadyExistsException(request.getRolename());
         }
 
-        roleRepository.save(request);
+        return roleRepository.save(request);
     }
 
     public void updateRole(

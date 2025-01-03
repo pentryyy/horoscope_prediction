@@ -48,10 +48,10 @@ public class RoleController {
 
     @PostMapping("/create-role")
     public ResponseEntity<?> createRole(@RequestBody Role request) {
-        roleService.createRole(request);
+        Role role = roleService.createRole(request);
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", request.getId());
+        jsonObject.put("id", role.getId());
         return ResponseEntity.status(HttpStatus.CREATED)
                              .contentType(MediaType.APPLICATION_JSON)
                              .body(jsonObject.toString());   

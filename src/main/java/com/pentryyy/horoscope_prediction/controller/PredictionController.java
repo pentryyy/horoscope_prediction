@@ -1,7 +1,5 @@
 package com.pentryyy.horoscope_prediction.controller;
 
-import java.util.Optional;
-
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,8 +22,8 @@ public class PredictionController {
     private PredictionService predictionService;
 
     @PostMapping("/create-prediction")
-    public ResponseEntity<?> createPrediction(@RequestBody Prediction prediction) {
-        predictionService.createPrediction(prediction);
+    public ResponseEntity<?> createPrediction(@RequestBody Prediction request) {
+        Prediction prediction = predictionService.createPrediction(request);
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", prediction.getId());
@@ -36,40 +34,19 @@ public class PredictionController {
 
     @DeleteMapping("/delete-prediction/{id}")
     public ResponseEntity<?> deletePrediction(@PathVariable Long id) {
-        if (!predictionService.existsById(id)) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "Предсказание не найдено");
-            
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .body(jsonObject.toString());   
-        }
-        
-        predictionService.deleteById(id);
+        predictionService.deletePrediction(id);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/update-prediction/{id}")
     public ResponseEntity<?> updatePrediction(
         @PathVariable Long id,
-        @RequestBody Prediction prediction) {                                            
-        
-        Optional<Prediction> optionalPrediction = predictionService.findById(id);
-
-        if (!optionalPrediction.isPresent()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "Предсказание не найдено");
-           
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .body(jsonObject.toString());   
-        }
-
-        Prediction newPrediction = optionalPrediction.get();
-        predictionService.updatePrediction(newPrediction, prediction);
+        @RequestBody Prediction request) {    
+            
+        predictionService.updatePrediction(id, request);
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", newPrediction.getId());
+        jsonObject.put("message", "Данные предсказания обновлены");
         return ResponseEntity.ok()
                              .contentType(MediaType.APPLICATION_JSON)
                              .body(jsonObject.toString());   
@@ -77,18 +54,7 @@ public class PredictionController {
 
     @GetMapping("/get-prediction/{id}")
     public ResponseEntity<?> getPredictionById(@PathVariable Long id) {
-        Optional<Prediction> optionalPrediction = predictionService.findById(id);
-
-        if (!optionalPrediction.isPresent()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "Предсказание не найдено");
-           
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .body(jsonObject.toString());   
-        }
-
-        Prediction prediction = optionalPrediction.get();
+        Prediction prediction = predictionService.findById(id);
         return ResponseEntity.ok(prediction);
     }
 
