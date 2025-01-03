@@ -1,11 +1,8 @@
 package com.pentryyy.horoscope_prediction.controller;
 
-import java.util.Optional;
-
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,66 +37,39 @@ public class UserController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
+
     @GetMapping("/get-all-users")
-    public ResponseEntity<Page<User>> getAllUsers(@RequestParam(defaultValue = "0") int page,
-                                                  @RequestParam(defaultValue = "10") int limit,
-                                                  @RequestParam(defaultValue = "id") String sortBy,
-                                                  @RequestParam(defaultValue = "ASC") String sortOrder) {
+    public ResponseEntity<Page<User>> getAllUsers(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int limit,
+        @RequestParam(defaultValue = "id") String sortBy,
+        @RequestParam(defaultValue = "ASC") String sortOrder) {
         
-        Page<User> users = userService.getAllUsers(page, limit, sortBy, sortOrder);
+        Page<User> users = userService.getAllUsers(
+            page, 
+            limit, 
+            sortBy, 
+            sortOrder);
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/get-user/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
-        Optional<User> optionalUser = userService.findById(id);
-
-        if (!optionalUser.isPresent()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "Пользователь не найден");
-           
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .body(jsonObject.toString());   
-        }
-
-        User user = optionalUser.get();
+        User user = userService.findById(id);
         return ResponseEntity.ok(user);
     }
 
     @PatchMapping("/change-role/{id}")
-    public ResponseEntity<?> changeRole(@PathVariable Long id,  @RequestBody Role requestRole) {                
-        Optional<User> optionalUser = userService.findById(id);
-        Optional<Role> optionalRole = roleService.findById(requestRole.getId());
-
-        // Пытаемся найти пользователя
-        if (!optionalUser.isPresent()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "Пользователь не найден");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .body(jsonObject.toString());
-        }
-        User user = optionalUser.get();
-
-        // Пытаемся найти роль
-        if (!optionalRole.isPresent()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "Роль не найдена");
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .body(jsonObject.toString());
-        }
-        Role role = optionalRole.get();
-
-        user.setRole(role);
-        userService.save(user);
+    public ResponseEntity<?> changeRole(
+        @PathVariable Long id,  
+        @RequestBody Role requestRole) {
+        
+        Role role = roleService.findById(requestRole.getId());
+        userService.changeRole(id, role);
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("rolename", role.getRolename())
-                  .put("user_id", user.getId());
+                  .put("userId", id);
 
         return ResponseEntity.ok()
                              .contentType(MediaType.APPLICATION_JSON)
@@ -108,28 +78,7 @@ public class UserController {
 
     @PatchMapping("/disable-user/{id}")
     public ResponseEntity<?> disableUser(@PathVariable Long id) {
-        Optional<User> optionalUser = userService.findById(id);
-
-        // Пытаемся найти пользователя
-        if (!optionalUser.isPresent()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "Пользователь не найден");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .body(jsonObject.toString());
-        }
-        User user = optionalUser.get();
-        
-        if (!user.getIsEnabled()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "Пользователь уже отключен");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .body(jsonObject.toString());
-        }
-
-        user.setIsEnabled(false);
-        userService.save(user);
+        userService.disableUser(id);
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("message", "Пользователь отключен");
@@ -140,28 +89,7 @@ public class UserController {
 
     @PatchMapping("/enable-user/{id}")
     public ResponseEntity<?> enableUser(@PathVariable Long id) {
-        Optional<User> optionalUser = userService.findById(id);
-
-        // Пытаемся найти пользователя
-        if (!optionalUser.isPresent()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "Пользователь не найден");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .body(jsonObject.toString());
-        }
-        User user = optionalUser.get();
-        
-        if (user.getIsEnabled()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "Пользователь уже активен");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .body(jsonObject.toString());
-        }
-
-        user.setIsEnabled(true);
-        userService.save(user);
+        userService.enableUser(id);
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("message", "Пользователь активен");
@@ -171,25 +99,12 @@ public class UserController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody @Valid UserUpdateRequest request) {        
-        Optional<User> optionalUser = userService.findById(id);
-
-        // Пытаемся найти пользователя
-        if (!optionalUser.isPresent()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "Пользователь не найден");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .body(jsonObject.toString());
-        }
-        User user = optionalUser.get();
+    public ResponseEntity<?> updateUser(
+        @PathVariable Long id, 
+        @RequestBody @Valid UserUpdateRequest request) {   
         
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        user.setGender(request.getGender());
-        user.setBirthDate(request.getBirthDate());
-        userService.save(user);
-
+        userService.updateUser(id, request);
+        
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("message", "Данные пользователя обновлены");
         return ResponseEntity.ok()
@@ -198,29 +113,17 @@ public class UserController {
     }
 
     @PatchMapping("/change-pass/{id}")
-    public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody @Valid PasswordChangeRequest request) {
-        Optional<User> optionalUser = userService.findById(id);
-
-        // Пытаемся найти пользователя
-        if (!optionalUser.isPresent()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "Пользователь не найден");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .body(jsonObject.toString());
-        }
-
-        User user                = optionalUser.get();
-        String newPassword       = request.getPassword();
-        String encryptedPassword = passwordEncoder.encode(newPassword);
-
-        user.setPassword(encryptedPassword);
-        userService.save(user);
+    public ResponseEntity<?> changePassword(
+        @PathVariable Long id, 
+        @RequestBody @Valid PasswordChangeRequest request) {
+        
+        String encryptedPassword = passwordEncoder.encode(request.getPassword());
+        userService.changePassword(id, encryptedPassword);
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("message", "Пароль успешно обновлен");
         return ResponseEntity.ok()
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .body(jsonObject.toString());
+                             .contentType(MediaType.APPLICATION_JSON)
+                             .body(jsonObject.toString());
     }
 }

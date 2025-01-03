@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.pentryyy.horoscope_prediction.exception.RoleDoesNotExistException;
 import com.pentryyy.horoscope_prediction.model.Role;
 import com.pentryyy.horoscope_prediction.repository.RoleRepository;
 
@@ -20,14 +21,16 @@ public class RoleService {
         return roleRepository.save(role);
     }
  
-    public Optional<Role> findById(Short id) {
-        return roleRepository.findById(id);
+    public Role findById(Short id) {
+        return roleRepository.findById(id)
+                             .orElseThrow(() -> new RoleDoesNotExistException(id));
     }
 
-    public Page<Role> getAllRoles(int page, 
-                                  int limit, 
-                                  String sortBy, 
-                                  String sortOrder) {
+    public Page<Role> getAllRoles(
+        int page, 
+        int limit, 
+        String sortBy, 
+        String sortOrder) {
         
         Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name())
             ? Sort.by(sortBy).ascending()

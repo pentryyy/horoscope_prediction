@@ -1,9 +1,6 @@
 package com.pentryyy.horoscope_prediction.controller;
 
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,16 +30,7 @@ public class AuthController {
     @Operation(summary = "Регистрация пользователя")
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUp(@RequestBody @Valid SignUpRequest request) {
-        try {
-            return ResponseEntity.ok(authenticationService.signUp(request));
-        } catch (Exception e) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", e.getMessage());
-           
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .body(jsonObject.toString());   
-        }
+        return ResponseEntity.ok(authenticationService.signUp(request));
     }
 
     @Operation(summary = "Авторизация пользователя")

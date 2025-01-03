@@ -28,29 +28,23 @@ public class RoleController {
     private RoleService roleService;
 
     @GetMapping("/get-all-roles")
-    public ResponseEntity<Page<Role>> getAllRoles(@RequestParam(defaultValue = "0") int page,
-                                                  @RequestParam(defaultValue = "10") int limit,
-                                                  @RequestParam(defaultValue = "id") String sortBy,
-                                                  @RequestParam(defaultValue = "ASC") String sortOrder) {
+    public ResponseEntity<Page<Role>> getAllRoles(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int limit,
+        @RequestParam(defaultValue = "id") String sortBy,
+        @RequestParam(defaultValue = "ASC") String sortOrder) {
         
-        Page<Role> roles = roleService.getAllRoles(page, limit, sortBy, sortOrder);
+        Page<Role> roles = roleService.getAllRoles(
+            page, 
+            limit, 
+            sortBy, 
+            sortOrder);
         return ResponseEntity.ok(roles);
     }
 
     @GetMapping("/get-role/{id}")
     public ResponseEntity<?> getRoleById(@PathVariable Short id) {
-        Optional<Role> optionalRole = roleService.findById(id);
-
-        if (!optionalRole.isPresent()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "Роль не найдена");
-           
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .body(jsonObject.toString());   
-        }
-
-        Role role = optionalRole.get();
+        Role role = roleService.findById(id);
         return ResponseEntity.ok(role);
     }
 
@@ -75,18 +69,11 @@ public class RoleController {
     }
  
     @PatchMapping("update-role/{id}")
-    public ResponseEntity<?> updateRole(@PathVariable Short id, @RequestBody Role updatedRole) {
-        Optional<Role> optionalRole = roleService.findById(id);
-
-        if (!optionalRole.isPresent()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "Роль не найдена");
-           
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                 .contentType(MediaType.APPLICATION_JSON)
-                                 .body(jsonObject.toString());   
-        }
-        Role role = optionalRole.get();
+    public ResponseEntity<?> updateRole(
+        @PathVariable Short id, 
+        @RequestBody Role updatedRole) {
+        
+        Role role = roleService.findById(id);
 
         role.setRolename(updatedRole.getRolename());
         roleService.save(role);
