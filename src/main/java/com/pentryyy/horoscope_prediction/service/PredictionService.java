@@ -6,7 +6,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.pentryyy.horoscope_prediction.enumeration.GenderType;
 import com.pentryyy.horoscope_prediction.enumeration.PredictionType;
+import com.pentryyy.horoscope_prediction.enumeration.ZodiacType;
 import com.pentryyy.horoscope_prediction.model.Prediction;
 import com.pentryyy.horoscope_prediction.repository.PredictionRepository;
 
@@ -37,27 +39,36 @@ public class PredictionService {
         return predictionRepository.findById(id);
     }
 
-    public Prediction updatePrediction(Prediction newPrediction, Prediction prediction) {
+    public Prediction updatePrediction(
+        Prediction newPrediction, 
+        Prediction prediction) {
+        
         newPrediction.setPredictionText(prediction.getPredictionText());
-        newPrediction.setPredictionDate(prediction.getPredictionDate());
+        newPrediction.setGender(prediction.getGender());
+        newPrediction.setZodiac(prediction.getZodiac());
         newPrediction.setPredictionType(prediction.getPredictionType());
         newPrediction.setUpdatedAt(LocalDateTime.now());
         return predictionRepository.save(newPrediction);
     }
 
-    public Page<Prediction> getAllPredictions(int page, 
-                                              int limit, 
-                                              String sortBy, 
-                                              String sortOrder,
-                                              PredictionType type) {
-        
+    public Page<Prediction> getAllPredictions(
+        int page,
+        int limit,
+        String sortBy,
+        String sortOrder,
+        GenderType gender,
+        ZodiacType zodiac,
+        PredictionType predictionType) {
+    
         Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name())
             ? Sort.by(sortBy).ascending()
             : Sort.by(sortBy).descending();
-        if (type != null) {
-            return predictionRepository.findByPredictionType(type, PageRequest.of(page, limit, sort));
-        } else {
-            return predictionRepository.findAll(PageRequest.of(page, limit, sort));
-        }
+        
+        return predictionRepository.findPredictions(
+            gender, 
+            zodiac, 
+            predictionType, 
+            PageRequest.of(page, limit, sort));
     }
+
 }

@@ -4,10 +4,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.pentryyy.horoscope_prediction.enumeration.GenderType;
 import com.pentryyy.horoscope_prediction.enumeration.PredictionType;
+import com.pentryyy.horoscope_prediction.enumeration.ZodiacType;
 
 @Entity
 @Getter
@@ -21,8 +22,13 @@ public class Prediction {
     @Column(name = "prediction_text", nullable = false, length = 500)
     private String predictionText;
 
-    @Column(name = "prediction_date", nullable = false)
-    private LocalDate predictionDate;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender", nullable = false)
+    private GenderType gender;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "zodiac", nullable = false)
+    private ZodiacType zodiac;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "prediction_type", nullable = false)

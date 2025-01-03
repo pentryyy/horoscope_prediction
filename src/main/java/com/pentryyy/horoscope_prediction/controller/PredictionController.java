@@ -10,7 +10,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.pentryyy.horoscope_prediction.enumeration.GenderType;
 import com.pentryyy.horoscope_prediction.enumeration.PredictionType;
+import com.pentryyy.horoscope_prediction.enumeration.ZodiacType;
 import com.pentryyy.horoscope_prediction.model.Prediction;
 import com.pentryyy.horoscope_prediction.service.PredictionService;
 
@@ -48,8 +50,9 @@ public class PredictionController {
     }
 
     @PatchMapping("/update-prediction/{id}")
-    public ResponseEntity<?> updatePrediction(@PathVariable Long id,
-                                              @RequestBody Prediction prediction) {                                            
+    public ResponseEntity<?> updatePrediction(
+        @PathVariable Long id,
+        @RequestBody Prediction prediction) {                                            
         
         Optional<Prediction> optionalPrediction = predictionService.findById(id);
 
@@ -90,13 +93,23 @@ public class PredictionController {
     }
 
     @GetMapping("/get-all-predictions")
-    public ResponseEntity<Page<Prediction>> getAllPredictions(@RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "10") int limit,
-                                                              @RequestParam(defaultValue = "id") String sortBy,
-                                                              @RequestParam(defaultValue = "ASC") String sortOrder,
-                                                              @RequestParam(required = false) PredictionType type) {
+    public ResponseEntity<Page<Prediction>> getAllPredictions(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int limit,
+        @RequestParam(defaultValue = "id") String sortBy,
+        @RequestParam(defaultValue = "ASC") String sortOrder,
+        @RequestParam(required = false) GenderType gender,
+        @RequestParam(required = false) ZodiacType zodiac,
+        @RequestParam(required = false) PredictionType predictionType) {
         
-        Page<Prediction> predictions = predictionService.getAllPredictions(page, limit, sortBy, sortOrder, type);
+        Page<Prediction> predictions = predictionService.getAllPredictions(
+            page, 
+            limit, 
+            sortBy, 
+            sortOrder, 
+            gender, 
+            zodiac, 
+            predictionType);
         return ResponseEntity.ok(predictions);
     }
 }

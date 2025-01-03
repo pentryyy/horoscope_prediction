@@ -12,6 +12,5 @@ public enum ZodiacType {
     SAGITTARIUS, // Стрелец
     CAPRICORN,   // Козерог
     AQUARIUS,    // Водолей
-    PISCES,      // Рыбы
-    OPHIUCHUS    // Змееносец
+    PISCES       // Рыбы
 }
