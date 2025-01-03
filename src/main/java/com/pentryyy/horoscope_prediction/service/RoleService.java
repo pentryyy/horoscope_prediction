@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.pentryyy.horoscope_prediction.dto.RoleUpdateRequest;
 import com.pentryyy.horoscope_prediction.exception.RoleDoesNotExistException;
 import com.pentryyy.horoscope_prediction.exception.RolenameAlreadyExistsException;
 import com.pentryyy.horoscope_prediction.model.Role;
@@ -39,17 +40,20 @@ public class RoleService {
         return roleRepository.findByRolename(rolename);
     }
 
-    public Role createRole(Role request) {
+    public Role createRole(RoleUpdateRequest request) {
         if (roleRepository.existsByRolename(request.getRolename())) {
             throw new RolenameAlreadyExistsException(request.getRolename());
         }
-
-        return roleRepository.save(request);
+        
+        Role role = Role.builder()
+                        .rolename(request.getRolename())
+                        .build();
+        return roleRepository.save(role);
     }
 
     public void updateRole(
         Short id, 
-        Role request) {
+        RoleUpdateRequest request) {
         
         Role role = findById(id);
 
