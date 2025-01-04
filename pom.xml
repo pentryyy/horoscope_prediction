@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.pentryyy</groupId>
-	<artifactId>horoscope-prediction</artifactId>
+	<artifactId>horoscope_prediction</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>horoscope-prediction</name>
+	<name>horoscope_prediction</name>
 	<description>Cервис для получения предсказания по api</description>
 	<url/>
 	<licenses>
