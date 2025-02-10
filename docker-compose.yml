@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: horoscope_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234pass
+      MYSQL_DATABASE: for_horoscope_db
+    ports:
+      - "3307:3306"  # Используем 3307, т.к. 3306 занят
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p1234pass"]
+      interval: 10s  # Проверка каждые 10 секунд
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    image: pentryyy/horoscope_prediction:v1.0
+    container_name: horoscope_app
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy  # Ждем, пока MySQL станет доступным
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/for_horoscope_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1234pass
+      SPRING_FLYWAY_USER: root
+      SPRING_FLYWAY_PASSWORD: 1234pass
+    ports:
+      - "9090:9090"
+
+volumes:
+  mysql_data:
